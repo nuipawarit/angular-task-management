@@ -1,0 +1,43 @@
+@import '~@swimlane/ngx-datatable/release/index.css';
+@import '~@swimlane/ngx-datatable/release/themes/bootstrap.css';
+@import '~@swimlane/ngx-datatable/release/assets/icons.css';
+
+.ngx-datatable.fullscreen {
+  position: absolute !important;
+  height: auto !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.ngx-datatable.bootstrap {
+  font-size: 14px;
+
+  .datatable-header {
+    .datatable-header-cell {
+      .datatable-header-cell-label.draggable {
+        cursor: move;
+      }
+    }
+  }
+
+  .datatable-body {
+    .datatable-body-row {
+      padding: 0;
+      border-top-color: #f4f4f4;
+    }
+
+    .datatable-body-row.datatable-row-even {
+      background-color: rgba(0, 0, 0, 0);
+    }
+
+    .datatable-body-cell-label {
+      padding: 8px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+  }
+}

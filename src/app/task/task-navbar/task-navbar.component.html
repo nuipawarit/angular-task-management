@@ -1,0 +1,132 @@
+<div class="form-inline tasklist-filter">
+  <div *ngIf="canAddTask" class="form-group hidden-xs" >
+    <button (click)="newTask()" class="btn btn-info btn-block"><i class="fa fa-plus"></i> สร้างงาน</button>
+  </div>
+  <!--<pre>{{[searchText,tags,dropdownFilter,reponseBy]|json}}</pre>-->
+  <div class="form-group task-search">
+    <div class="input-group">
+      <div class="input-group-btn">
+        <div #bsDropdown="bs-dropdown" dropdown container="body" [autoClose]="false" class="btn-group">
+          <button type="button" dropdownToggle class="btn btn-default btn-flat dropdown-toggle">
+            <span *ngIf="dropdownFilterBadge > 0" class="badge bg-blue">{{dropdownFilterBadge}}</span>
+            <span>Filter</span>
+            <span class="caret"></span>
+          </button>
+
+          <div *dropdownMenu class="task-search-dropdown-menu dropdown-menu">
+            <div class="row">
+              <div [ngClass]="{'col-sm-4':enableCompleteDate, 'col-sm-6':!enableCompleteDate}">
+                <div class="form-group form-group-sm">
+                  <label class="text-muted small">ผู้มอบหมาย</label>
+                  <!-- TODO change select2 style to ng-select -->
+                  <select2 *ngIf="employees"
+                           [data]="employees"
+                           [value]="dropdownFilter.assignBy"
+                           [options]="{placeholder:'ค้นหาพนักงาน..'}"
+                           [cssImport]="false"
+                           [width]="'100%'"
+                           (valueChanged)="changeAssignBy($event.value)"></select2>
+                </div>
+              </div>
+
+              <div [ngClass]="{'col-sm-4':enableCompleteDate, 'col-sm-6':!enableCompleteDate}">
+                <div class="divider visible-xs"></div>
+                <div class="form-group form-group-sm">
+                  <label class="text-muted small">วันที่สร้างงาน (จาก)</label>
+                  <input type="date"
+                         [(ngModel)]="dropdownFilter.assignDateAfter"
+                         (change)="updateDropdownFilterBadge()"
+                         class="form-control">
+                </div>
+                <div class="form-group form-group-sm">
+                  <label class="text-muted small">วันที่สร้างงาน (ถึง)</label>
+                  <input type="date"
+                         [(ngModel)]="dropdownFilter.assignDateBefore"
+                         (change)="updateDropdownFilterBadge()"
+                         class="form-control">
+                </div>
+              </div>
+
+              <div class="col-sm-4" *ngIf="enableCompleteDate">
+                <div class="divider visible-xs"></div>
+                <div class="form-group form-group-sm">
+                  <label class="text-muted small">วันที่ปิดงาน (จาก)</label>
+                  <input type="date"
+                         [(ngModel)]="dropdownFilter.completeDateAfter"
+                         (change)="updateDropdownFilterBadge()"
+                         class="form-control">
+                </div>
+                <div class="form-group form-group-sm">
+                  <label class="text-muted small">วันที่ปิดงาน (ถึง)</label>
+                  <input type="date"
+                         [(ngModel)]="dropdownFilter.completeDateBefore"
+                         (change)="updateDropdownFilterBadge()"
+                         class="form-control">
+                </div>
+              </div>
+            </div>
+
+            <hr style="margin: 10px 0;">
+
+            <div class="row">
+              <div class="col-sm-12">
+                <button type="button"
+                        class="btn btn-default btn-xs"
+                        (click)="showAssignedTask();bsDropdown.hide()">
+                  งานที่เรามอบหมาย
+                </button>
+
+                <button type="button"
+                        class="btn btn-default btn-xs pull-right"
+                        (click)="resetFilter(true)">
+                  <i class="fa fa-refresh"></i> reset filter
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <tag-input [(ngModel)]="tags"
+                 [(searchModel)]="searchText"
+                 [tagList]="tagList"
+                 [allowAdd]="true"
+                 [bsRemove]="true"
+                 [tagLimit]="3"
+                 [typeaheadLimit]="8"
+                 [ngStyle]="{'min-width': '200px'}"
+                 placeholder="ค้นหางาน..."></tag-input>
+
+      <div class="input-group-btn">
+        <button (click)="submit();bsDropdown.hide()" class="btn btn-default" type="button">
+          <i class="fa fa-search"></i> ค้นหา
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="task-response-by pull-right">
+    <div class="form-group">
+      <div *ngIf="reponseByList" class="input-group">
+        <span class="input-group-addon">
+          <i class="fa fa-user"></i> {{reponseByLabel}}
+        </span>
+        <!-- TODO change select2 style to ng-select -->
+        <select2 [data]="reponseByList"
+                 [value]="reponseBy"
+                 [options]="{placeholder:'ค้นหาพนักงาน..', templateResult:reponseByTmp, templateSelection: reponseByTmp}"
+                 [cssImport]="false"
+                 [width]="'100%'"
+                 (valueChanged)="reponseByOnChange($event.value)"></select2>
+      </div>
+    </div>
+
+    <div class="form-group hidden-xs hidden-sm">
+      <button class="btn btn-default" (click)="fullScreenToggle()">
+        <i class="fa" [ngClass]="{'fa-arrows-alt' : !fullScreenMode, 'fa-compress' : fullScreenMode}"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+</div>

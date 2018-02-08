@@ -1,0 +1,52 @@
+.task-group {
+  margin-bottom: 15px;
+
+  .task-group-heading {
+    margin-bottom: 8px;
+
+    .task-group-title {
+      font-size: 14px;
+
+      > .task-group-toggle {
+        color: #777;
+        &:hover {
+          cursor: pointer;
+          color: #333;
+        }
+
+        .avatar {
+          margin-right: 4px;
+          height: 26px;
+          width: auto;
+          border-radius: 50%;
+          transition: 0.2s ease-out all;
+          &.ng-hide-add,
+          &.ng-hide-remove-active {
+            height: 26px;
+            margin-right: 4px;
+            opacity: 1;
+          }
+          &.ng-hide-add-active {
+            height: 0;
+            margin-right: 0;
+            opacity: 0;
+          }
+          &.ng-hide-remove {
+            height: 0;
+            margin-right: 0;
+            opacity: 0;
+          }
+        }
+
+        .label {
+          margin-top: 2px;
+          background-color: #fff;
+          color: #999;
+        }
+      }
+    }
+  }
+
+  .task-group-body {
+  }
+}

@@ -1,0 +1,138 @@
+@import "../../../../node_modules/admin-lte/build/bootstrap-less/mixins.less";
+@import "../../../../node_modules/admin-lte/build/bootstrap-less/variables.less";
+@import "../../../../node_modules/admin-lte/build/less/variables.less";
+@import "../../../../node_modules/admin-lte/build/less/mixins.less";
+@import "../../../style/scrollbar.less";
+
+:host {
+  flex-grow: 1;
+  position: relative;
+  min-height: 400px;
+}
+
+.tasklist-wrapper {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Chrome/Safari/Opera */
+  -khtml-user-select: none; /* Konqueror */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently not supported by any browser */
+
+  .tasklist-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    .tasklist.columns-view {
+      display: inline-block;
+      white-space: normal;
+      margin-left: 5px;
+      margin-right: 25px;
+      padding-bottom: 15px;
+      height: 100%;
+      width: 100%;
+      max-width: 340px;
+      vertical-align: top;
+
+      &.ng-enter {
+        animation: fadeIn 1s ease-out;
+      }
+      &.ng-leave {
+        display: none;
+      }
+
+      > .box {
+        .border-radius(2px);
+        display: flex;
+        flex-direction: column;
+        background: #eeeeee;
+        border: none !important;
+        margin-bottom: 0;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.25);
+        vertical-align: top;
+        max-height: 100%;
+        &:last-child {
+          margin-right: 5px;
+        }
+        &.box-solid {
+          &.box-owner {
+            .box-solid-variant(#049cdb);
+          }
+
+          &.box-height-pri {
+            .box-solid-variant(#0088cc);
+          }
+
+          &.box-medium-pri {
+            .box-solid-variant(#5bc0de);
+          }
+
+          &.box-low-pri {
+            .box-solid-variant(#949494);
+          }
+        }
+
+        .box-header {
+          .border-radius(@box-border-radius; @box-border-radius; 0; 0;);
+          padding: 10px 15px;
+          display: table;
+          width: 100%;
+
+          > .avatar {
+            margin-right: 7px;
+            height: 40px;
+            width: auto;
+            border-radius: 50%;
+            transition: 0.2s ease-out all;
+            &.ng-hide-add,
+            &.ng-hide-remove-active {
+              height: 40px;
+              margin-right: 7px;
+              opacity: 1;
+            }
+            &.ng-hide-add-active {
+              height: 24px;
+              margin-right: 0;
+              opacity: 0;
+            }
+            &.ng-hide-remove {
+              height: 0;
+              margin-right: 0;
+              opacity: 0;
+            }
+          }
+
+          > .fa {
+            margin-right: 7px;
+            font-size: 16px;
+            line-height: 24px;
+          }
+
+          .box-title {
+            font-size: 24px;
+            width: 100%;
+            display: table-cell;
+            vertical-align: middle;
+          }
+        }
+
+        .box-body {
+          flex-grow: 1;
+          padding: 15px;
+          overflow-x: hidden;
+          .scrollbar (
+            @color: rgba(0, 0, 0, 0.15),
+            @background : rgba(0,0,0,0.1),
+            @width: 6px,
+            @radius: 2px
+          );
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,871 @@
+<form #taskform="ngForm"
+      name="taskform"
+      class="task-form"
+      [ngClass]="{'show-invalid':show_invalid}"
+      autocomplete="off">
+  <div class="modal-header">
+    <div class="modal-tool clearfix">
+      <span class="task-id" *ngIf="is_edit_mode">( Task ID : {{formData?.TaskID}} )</span>
+
+      <div class="pull-right">
+        <span class="task-type">
+          <span><i class="fa fa-file-text-o"></i> <b>ประเภท</b> : </span>
+          <span *ngIf="is_edit_mode">{{formData?.TaskTypeName}}</span>
+          <select *ngIf="is_add_mode" [(ngModel)]="task_type" name="taskType">
+            <option *ngFor="let taskType of task_type_list" [ngValue]="taskType.id">{{taskType.name}}</option>
+          </select>
+        </span>
+
+        <!-- อนุมัติปิดงาน -->
+        <div class="header-btn-group" *ngIf="is_edit_mode && ([1,7]|contains:task_type)">
+          <button type="button"
+                  class="header-btn"
+                  *ngIf="is_edit_mode
+                       && is_responsible
+                       && !!formData?.TaskCloseReq === false
+                       && !!formData?.TaskIsCompleted === false"
+                  (click)="reqTaskClose()"
+                  [class.disabled]="submitting">
+            <i class="fa fa-flag-o"></i> ขอปิดงาน
+          </button>
+
+          <div class="header-label text-orange"
+               *ngIf="!is_task_closer
+                    && !!formData?.TaskCloseReq === true
+                    && !!formData?.TaskIsCompleted === false">
+            <i class="fa fa-flag"></i> รออนุมัติปิดงาน
+          </div>
+          
+          <button type="button"
+                  class="header-btn text-green"
+                  *ngIf="is_task_closer
+                     && !!formData?.TaskCloseReq === true
+                     && !!formData?.TaskIsCompleted === false"
+                  (click)="approveTaskClose()"
+                  [class.disabled]="submitting">
+            <i class="fa fa-flag"></i> อนุมัติปิดงาน
+          </button>
+
+          <button type="button"
+                  class="header-btn text-red"
+                  *ngIf="is_task_closer
+                     && !!formData?.TaskCloseReq === true
+                     && !!formData?.TaskIsCompleted === false"
+                  (click)="disapproveTaskClose()"
+                  [class.disabled]="submitting">
+            <i class="fa fa-flag"></i> ไม่อนุมัติ
+          </button>
+
+          <div class="header-label text-teal"
+               *ngIf="!!formData?.TaskIsCompleted === true">
+            <i class="fa fa-flag"></i> ปิดงานแล้ว
+          </div>
+        </div>
+        <!-- end of อนุมัติปิดงาน -->
+
+        <!-- อนุมัติทั้วไป -->
+        <div class="header-btn-group" *ngIf="is_edit_mode && ([3,5]|contains:task_type)">
+          <div class="header-label text-orange"
+               *ngIf="((approves|filterBy:['id']:user_emp_id:true).length === 0)
+                    && !!formData?.TaskIsCompleted === false">
+            <i class="fa fa-flag"></i> กำลังรออนุมัติ
+          </div>
+
+          <button type="button"
+                  class="header-btn text-green"
+                  *ngIf="((approves|filterBy:['id']:user_emp_id:true).length > 0)
+                    && ((approves|filterBy:['id']:user_emp_id:true)[0]['is_approved'] === false)
+                    && !!formData?.TaskIsCompleted === false"
+                  [class.disabled]="submitting"
+                  (click)="approveTask()">
+            <i class="fa fa-check"></i> อนุมัติ
+          </button>
+
+          <button type="button"
+                  class="header-btn text-red"
+                  *ngIf="((approves|filterBy:['id']:user_emp_id:true).length > 0)
+                    && ((approves|filterBy:['id']:user_emp_id:true)[0]['is_approved'] === false)
+                    && !!formData?.TaskIsCompleted === false"
+                  (click)="disapproveTask()"
+                  [class.disabled]="submitting">
+            <i class="fa fa-times"></i> ไม่อนุมัติ
+          </button>
+
+          <div class="header-label text-green"
+               *ngIf="((approves|filterBy:['is_approved']:true:true).length === approves.length)
+                    && !!formData?.TaskIsCompleted === true">
+            <i class="fa fa-flag"></i> อนุมัติแล้ว
+          </div>
+
+          <div class="header-label text-red"
+               *ngIf="((approves|filterBy:['is_approved']:true:true).length < approves.length)
+                    && !!formData?.TaskIsCompleted === true">
+            <i class="fa fa-flag"></i> ไม่ผ่านการอนุมัติ
+          </div>
+
+          <button type="button"
+                  class="header-btn text-teal"
+                  *ngIf="([5]|contains:task_type)
+                    && ((approves|filterBy:['is_approved']:true:true).length === approves.length)
+                    && !!formData?.TaskIsCompleted === true"
+                  (click)="printApproveForm()"
+                  [class.disabled]="submitting">
+            <i class="fa fa-print"></i> พิมพ์ใบขออนุมัติ
+          </button>
+        </div>
+        <!-- end of อนุมัติทั้วไป -->
+
+        <button type="button"
+                class="header-btn subscription-btn"
+                *ngIf="is_edit_mode"
+                (click)="toggleSubscription()"
+                [tooltip]="formData?.TaskSubscription ? 'ปิดรับการแจ้งเตือน' : 'รับการแจ้งเตือน'"
+                container="body"
+                [class.disabled]="submitting">
+          <i class="fa fa-fw"
+             [ngClass]="{'fa-bell':formData?.TaskSubscription, 'fa-bell-slash':!formData?.TaskSubscription}"></i>
+        </button>
+
+        <button type="button" class="header-btn close-btn" (click)="close()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <input type="text"
+           [(ngModel)]="title"
+           name="title"
+           class='h2 modal-title form-control'
+           [readonly]="prevent_edit"
+           (blur)="titleSubmit()"
+           (keypress)="blurOnEnter($event)"
+           placeholder="โปรดใส่หัวข้องาน..."
+           autocomplete="off"
+           required>
+  </div>
+
+  <div class="modal-content-flex">
+    <div class="modal-content-left">
+      <div class="modal-body">
+        <div *ngIf="!prevent_edit || !!detail" class="task-content">
+          <a *ngIf="is_edit_mode && !prevent_edit && !detail_edit_mode && !detail"
+             (click)="!prevent_edit && detailEnableEditMode()"
+             class="task-detail"><i class="fa fa-plus"></i> เพิ่มรายละเอียดงาน</a>
+
+          <p *ngIf="is_edit_mode && !detail_edit_mode"
+             [innerHTML]="detail"
+             (click)="detailOnClick($event)"
+             class="task-detail"
+             [ngClass]="{'readonly':prevent_edit}"></p>
+
+          <div *ngIf="!prevent_edit && (detail_edit_mode || is_add_mode)" class="edit-detail-form">
+            <trix-editor appAngularTrix
+                         class="trix-content"
+                         name="detail"
+                         [(ngModel)]="detail"
+                         (trixAttachmentAdd)="detailTrixAttachmentAdd($event.e)">
+            </trix-editor>
+
+            <p class="help-block">
+              <span>
+                <i class="fa fa-picture-o"></i>
+                สามารถแทรกรูปภาพลงในรายละเอียดงานได้ โดยการคัดลอกรูป แล้ววางรูป (Ctrl+V)
+              </span>
+            </p>
+
+            <button type="button"
+                    *ngIf="is_edit_mode"
+                    (click)="detailEditCancel()"
+                    class="btn btn-default btn-sm">
+              <i class="fa fa-undo"></i> ยกเลิกการแก้ไข
+            </button>
+
+            <button type="button"
+                    *ngIf="is_edit_mode"
+                    (click)="detailSubmit()"
+                    class="btn btn-success btn-sm pull-right">
+              <i class="fa fa-pencil"></i> บันทึก
+            </button>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="!prevent_edit || attach?.length > 0">
+          <div class="task-content-label">
+            <span><i class="fa fa-fw fa-paperclip"></i> ไฟล์แนบ</span>
+          </div>
+          <div class="task-content">
+            <ul class="task-attach clearfix">
+              <li *ngFor="let file of attach" class="task-attach-item">
+                <!-- TODO ปุ่มลบไฟล์แนบ -->
+                <!--<i *ngIf="is_add_mode"-->
+                <!--class="fa fa-times close"-->
+                <!--title="ลบไฟล์แนบ"-->
+                <!--(click)="attach.splice($index,1)"></i>-->
+
+                <a target="_blank" href="{{file.fileUrl}}" *ngIf="file.isImage" class="attach-img">
+                  <img appImgPopover [src]="file.fileUrl">
+                </a>
+
+                <a target="_blank" href="{{file.fileUrl}}" *ngIf="!file.isImage" class="attach-icon">
+                  <i class="fa" [ngClass]="fileIconClass[file.filExtension] || 'fa-file-text-o'"></i>
+                </a>
+
+                <div class="attach-info">
+                  <span class="attach-name" title="{{file.fileName}}">{{file.fileName}}</span>
+                </div>
+              </li>
+
+              <li *ngIf="attach_fetching" class="task-attach-item">
+                <span class="attach-icon">
+                  <i class="fa fa-spin fa-refresh"></i>
+                </span>
+
+                <div class="attach-info">
+                  <span class="attach-name">Loading...</span>
+                </div>
+              </li>
+
+              <label *ngIf="!attach_fetching && !prevent_edit"
+                     class="add-attach-btn"
+                     [class.new]="attach?.length === 0">
+                <input type="file" (change)="attachUploadFiles($event)" multiple>
+                <i class="fa fa-plus"></i> เพิ่มไฟล์แนบ
+              </label>
+            </ul>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="[3,7]|contains:task_type">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-address-book"></i> ลูกค้า
+          </div>
+
+          <div class="task-content">
+            <!-- TODO implement select2 style to ng-select -->
+            <ng-select [options]="customerOptions"
+                       [(ngModel)]="customer"
+                       #customerModel="ngModel"
+                       name="customer"
+                       placeholder="เลือกลูกค้า.."
+                       filterPlaceholder="โปรดระบุชื่อลูกค้า อย่างน่อย 2 ตัวอักษร..."
+                       class="task-customer"
+                       (selected)="loadCustomerInfo($event)"
+                       (onFilterInputChanged)="searchCustomer($event)"
+                       [disabled]="!is_add_mode"
+                       required></ng-select>
+            <small *ngIf="customerModel.errors && show_invalid" class="help-block has-error ">
+              *โปรดระบุลูกค้า
+            </small>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="[7]|contains:task_type">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-book"></i> ประเภทติดต่อ
+          </div>
+          <div class="task-content">
+            <select [(ngModel)]="contact_type"
+                    name="contact_type"
+                    #contactTypeModel="ngModel"
+                    (change)="contactTypeSubmit()"
+                    class="form-control task-contact-type"
+                    [disabled]="prevent_edit"
+                    [required]="true">
+              <option *ngIf="!contact_type" [ngValue]="null" disabled>เลือกประเภทติดต่อ...</option>
+              <option *ngFor="let contactType of contact_type_list" [ngValue]="contactType">{{contactType}}</option>
+            </select>
+            <small *ngIf="contactTypeModel.errors && show_invalid" class="help-block has-error ">
+              *โปรดระบุประเภทติดต่อ
+            </small>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="[3]|contains:task_type">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-usd"></i> จำนวนที่ต้องการขออนุมัติ
+          </div>
+          <div class="task-content">
+            <div class="well form-horizontal">
+              <div class="form-group">
+                <div class="col-sm-2 control-label">จำนวนเงิน</div>
+                <div class="col-sm-4">
+                  <input type="text"
+                         class="form-control"
+                         name="customerCreditAmount"
+                         #customerCreditAmountModel="ngModel"
+                         [(ngModel)]="customer_credit.amount"
+                         currencyMask
+                         [options]="{allowNegative:false,precision:0,prefix:'',suffix:' บาท'}"
+                         placeholder="(บาท)"
+                         [readonly]="!is_add_mode">
+
+                  <small *ngIf="customerCreditAmountModel.errors && show_invalid" class="help-block has-error">
+                    *โปรดใส่จำนวนเต็ม (ตัวอย่าง 1000)
+                  </small>
+                </div>
+
+                <div class="col-sm-offset-2 col-sm-10">
+                  <p *ngIf="customer_credit.amount_old !== null" class="help-block info-block text-blue">
+                    (ปัจจุบัน {{customer_credit.amount_old|number:0}} บาท)</p>
+                </div>
+              </div>
+
+              <hr>
+
+              <div class="form-group">
+                <div class="col-sm-2 control-label">Due 1</div>
+                <div class="col-sm-4">
+                  <input type="text"
+                         class="form-control"
+                         name="customerCreditDue1"
+                         #customerCreditDue1Model="ngModel"
+                         [(ngModel)]="customer_credit.due1"
+                         currencyMask
+                         [options]="{allowNegative:false,precision:0,prefix:'',suffix:' วัน'}"
+                         [max]="200"
+                         placeholder="(วัน)"
+                         [readonly]="!is_add_mode">
+
+                  <small *ngIf="customerCreditDue1Model.errors && show_invalid" class="help-block has-error ">
+                    *โปรดใส่จำนวนเต็ม ไม่เกิน 200 วัน
+                  </small>
+                </div>
+
+                <div class="col-sm-2 control-label">ชำระทุกวันที่</div>
+                <div class="col-sm-4">
+                  <select class="form-control"
+                          name="customerCreditDue1Day"
+                          #customerCreditDue1DayModel="ngModel"
+                          [(ngModel)]="customer_credit.due1_day"
+                          [disabled]="!is_add_mode">
+                    <option [ngValue]="0">(ไม่เปลี่ยนแปลง)</option>
+                    <option *ngFor="let i of 1|range:31" [ngValue]="i">{{i}}</option>
+                  </select>
+                </div>
+
+                <div class="col-sm-offset-2 col-sm-10">
+                  <p *ngIf="customer_credit.due1_old !== null" class="help-block info-block text-blue">
+                    (ปัจจุบัน {{customer_credit.due1_old|number:0}} วัน
+                    <span *ngIf="customer_credit.due1_day_old>0">ชำระทุกวันที่
+                      {{customer_credit.due1_day_old|number:0}}</span>)
+                  </p>
+                </div>
+              </div>
+
+              <hr>
+
+              <div class="form-group">
+                <div class="col-sm-2 control-label">Due 2</div>
+                <div class="col-sm-4">
+                  <input type="text"
+                         class="form-control"
+                         name="customerCreditDue2"
+                         #customerCreditDue2Model="ngModel"
+                         [(ngModel)]="customer_credit.due2"
+                         currencyMask
+                         [options]="{allowNegative:false,precision:0,prefix:'',suffix:' วัน'}"
+                         [max]="200"
+                         placeholder="(วัน)"
+                         [readonly]="!is_add_mode">
+
+                  <small *ngIf="customerCreditDue2Model.errors && show_invalid" class="help-block has-error">
+                    *โปรดใส่จำนวนเต็ม ไม่เกิน 200 วัน
+                  </small>
+                </div>
+
+                <div class="col-sm-2 control-label">ชำระทุกวันที่</div>
+                <div class="col-sm-4">
+                  <select class="form-control"
+                          name="customerCreditDue2Day"
+                          #customerCreditDue2DayModel="ngModel"
+                          [(ngModel)]="customer_credit.due2_day"
+                          [disabled]="!is_add_mode">
+                    <option [ngValue]="0">(ไม่เปลี่ยนแปลง)</option>
+                    <option *ngFor="let i of 1|range:31" [ngValue]="i">{{i}}</option>
+                  </select>
+                </div>
+
+                <div class="col-sm-offset-2 col-sm-10">
+                  <p *ngIf="customer_credit.due2_old !== null"
+                     class="help-block info-block text-blue">
+                    (ปัจจุบัน {{customer_credit.due2_old|number:0}} วัน
+                    <span *ngIf="customer_credit.due2_day_old>0">ชำระทุกวันที่
+                      {{customer_credit.due2_day_old|number:0}}</span>)
+                  </p>
+                </div>
+              </div>
+
+              <hr>
+
+              <div class="form-group">
+                <div class="col-sm-2 control-label">Due 3</div>
+                <div class="col-sm-4">
+                  <input type="text"
+                         class="form-control"
+                         name="customerCreditDue3"
+                         #customerCreditDue3Model="ngModel"
+                         [(ngModel)]="customer_credit.due3"
+                         currencyMask
+                         [options]="{allowNegative:false,precision:0,prefix:'',suffix:' วัน'}"
+                         [max]="200"
+                         placeholder="(วัน)"
+                         [readonly]="!is_add_mode">
+
+                  <small *ngIf="customerCreditDue3Model.errors && show_invalid" class="help-block has-error">
+                    *โปรดใส่จำนวนเต็ม ไม่เกิน 200 วัน
+                  </small>
+                </div>
+
+                <div class="col-sm-offset-2 col-sm-10">
+                  <p *ngIf="customer_credit.due3_old !== null" class="help-block info-block text-blue">
+                    (ปัจจุบัน {{customer_credit.due3_old|number:0}} วัน)
+                  </p>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-sm-2 control-label">Due สด</div>
+                <div class="col-sm-4">
+                  <input type="text"
+                         class="form-control"
+                         name="customerCreditDue0"
+                         #customerCreditDue0Model="ngModel"
+                         [(ngModel)]="customer_credit.due0"
+                         currencyMask
+                         [options]="{allowNegative:false,precision:0,prefix:'',suffix:' วัน'}"
+                         [max]="200"
+                         placeholder="(วัน)"
+                         [readonly]="!is_add_mode">
+
+                  <small *ngIf="customerCreditDue0Model.errors && show_invalid" class="help-block has-error">
+                    *โปรดใส่จำนวนเต็ม ไม่เกิน 200 วัน
+                  </small>
+                </div>
+
+                <div class="col-sm-offset-2 col-sm-10">
+                  <p *ngIf="customer_credit.due0_old !== null" class="help-block info-block text-blue">
+                    (ปัจจุบัน {{customer_credit.due0_old|number:0}} วัน)
+                  </p>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <small class="help-block">*จำนวนวันที่ต้องการขอของแต่ละ Due ต้องไม่เกิน 200 วัน</small>
+                </div>
+              </div>
+
+              <hr>
+
+              <div class="form-group no-margin-">
+                <div class="col-sm-2 control-label">ผู้อนุมัติ</div>
+                <div class="col-sm-8">
+                  <select class="form-control"
+                          name="customerCreditApprovers"
+                          #customerCreditApproversModel="ngModel"
+                          [(ngModel)]="customer_credit.approvers"
+                          [disabled]="!is_add_mode"
+                          [required]="true">
+                    <option [ngValue]="null" *ngIf="!customer_credit.approvers">เลือกผู้อนุมัติ...</option>
+                    <option *ngFor="let approvers of credit_approvers_list" [ngValue]="approvers.id">
+                      {{approvers.name}}
+                    </option>
+                  </select>
+
+                  <small *ngIf="customerCreditApproversModel.errors && show_invalid" class="help-block has-error">
+                    *โปรดระบุผู้อนุมัติ
+                  </small>
+                </div>
+              </div>
+
+              <!--<pre>{{customer_credit|json}}</pre>-->
+            </div>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="[5]|contains:task_type">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-user"></i> ผู้อนุมัติ
+          </div>
+          <div class="task-content">
+            <tag-input name="approves"
+                       #approvesModel="ngModel"
+                       [(ngModel)]="approves"
+                       [tagList]="emp_list"
+                       [template]="empTagInput"
+                       [tagTemplate]="approveEmpTag"
+                       [tagLimit]="3"
+                       class="task-approves"
+                       placeholder="เพิ่มผู้อนุมัติ (เพิ่มได้สูงสุด3คน)"
+                       [readonly]="!is_add_mode"
+                       [required]="true"></tag-input>
+            <!--<pre>{{approves|json}}</pre>-->
+
+            <small *ngIf="approvesModel.errors && show_invalid" class="help-block has-error">
+              *โปรดระบุผู้ผู้อนุมัติอย่างน้อย 1 คน
+            </small>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="[5]|contains:task_type">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-building"></i> บริษัท และ สาขา
+          </div>
+          <div class="task-content">
+            <div class="row">
+              <div class="col-sm-6">
+                <select [(ngModel)]="company"
+                        name="company"
+                        #companyModel="ngModel"
+                        class="form-control task-company col-sm-6"
+                        [disabled]="!is_add_mode"
+                        [required]="true">
+                  <option [ngValue]="null" *ngIf="!company">เลือกบริษัท...</option>
+                  <option *ngFor="let comp of company_list" [ngValue]="comp.id">{{comp.name}}</option>
+                </select>
+              </div>
+
+              <div class="col-sm-6">
+                <select [(ngModel)]="branch"
+                        name="branch"
+                        #branchModel="ngModel"
+                        class="form-control task-branch"
+                        [disabled]="!is_add_mode"
+                        [required]="true">
+                  <option [ngValue]="null" *ngIf="!branch">เลือกสาขา...</option>
+                  <option *ngFor="let bran of branch_list" [ngValue]="bran.id">{{bran.name}}</option>
+                </select>
+              </div>
+            </div>
+
+            <small *ngIf="(companyModel.errors || branchModel.errors) && show_invalid" class="help-block has-error">
+              *โปรดระบุบริษัทและสาขา
+            </small>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="is_edit_mode || is_responsible">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-calendar-check-o"></i> วันที่คาดว่าจะเสร็จ
+          </div>
+          <div class="task-content" [ngSwitch]="!prevent_edit && is_responsible">
+            <input *ngSwitchCase="true"
+                   type="date"
+                   [(ngModel)]="expect_date"
+                   name="expectDate"
+                   (blur)="expectDateSubmit()"
+                   class="form-control">
+
+            <input *ngSwitchCase="false"
+                   type="text"
+                   [value]="(expect_date) ? (expect_date | dateThai) : '(ยังไม่กำหนด)'"
+                   [readonly]="true"
+                   class="form-control">
+          </div>
+        </div>
+
+        <div class="task-content-group">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-hourglass"></i> แผนการทำงาน
+          </div>
+          <div class="task-content">
+            <select [(ngModel)]="priority"
+                    name="priority"
+                    #priorityModel="ngModel"
+                    (change)="prioritySubmit()"
+                    class="form-control task-priority"
+                    [disabled]="prevent_edit"
+                    [required]="true">
+              <option [ngValue]="null" *ngIf="!priority">เลือกแผนการทำงาน...</option>
+              <option *ngFor="let due of priority_list" [ngValue]="due.id">{{due.name}}</option>
+            </select>
+            <small *ngIf="priorityModel.errors && show_invalid" class="help-block has-error">
+              *โปรดระบุแผนการทำงาน
+            </small>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="is_edit_mode && formData?.AssignedBy">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-user"></i> ผู้มอบหมาย
+          </div>
+          <div class="task-content">
+            <div class="task-assigner" [tooltip]="('วันที่มอบหมาย ' + (assign_date | dateThai))" container="body">
+              <img class="avatar"
+                   [src]="avatarUrl + 'emp' + formData.AssignedEmpKey + '_40x40.png'"
+                   onerror="this.src='assets/images/user.png';">
+              <span class="emp-name">{{formData.AssignedName}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="[1,7]|contains:task_type">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-user"></i> ผู้รับผิดชอบ
+          </div>
+          <div class="task-content">
+            <!-- TODO implement select2 style to ng-select -->
+            <ng-select [options]="empOptions"
+                       [(ngModel)]="reponse_by"
+                       #reponseByModel="ngModel"
+                       name="reponseBy"
+                       placeholder="เลือกผู้รับผิดชอบ.."
+                       filterPlaceholder="โปรดระบุชื่อผู้รับผิดชอบ..."
+                       class="task-reponseby"
+                       (selected)="reponseBySubmit()"
+                       [disabled]="prevent_edit"
+                       [required]="true">
+              <ng-template #optionTemplate let-option="option">
+                <img class="avatar"
+                     [src]="avatarUrl + 'emp' + option.value?.userEmpKey + '_40x40.png'"
+                     onerror="this.src='assets/images/user.png';">
+                <span>{{option.label}}</span>
+              </ng-template>
+            </ng-select>
+            <small *ngIf="reponseByModel.errors && show_invalid" class="help-block has-error ">
+              *โปรดระบุผู้รับผิดชอบ
+            </small>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="!(is_readonly && cc.length === 0)">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-user"></i> ผู้เกี่ยวข้อง
+          </div>
+          <div class="task-content">
+            <tag-input [(ngModel)]="_cc"
+                       name="cc"
+                       (blur)="ccSubmit()"
+                       [tagList]="emp_list"
+                       [template]="empTagInput"
+                       [tagTemplate]="empTag"
+                       class="task-cc"
+                       placeholder="เพิ่มผู้เกี่ยวข้อง.."
+                       [readonly]="is_readonly"></tag-input>
+          </div>
+        </div>
+
+        <div class="task-content-group" *ngIf="!(is_readonly && tag.length > 0)">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-tags"></i> Tag
+          </div>
+          <div class="task-content">
+            <tag-input [(ngModel)]="_tag"
+                       name="tag"
+                       (blur)="tagSubmit()"
+                       [tagList]="tag_list"
+                       [allowAdd]="true"
+                       [bsRemove]="true"
+                       class="task-tag multi-line task-tag-input"
+                       placeholder="เพื่ม Tag ที่เกี่ยวข้องกับทะเบียนงาน โดยพิมพ์เครื่องหมาย '#' ตามด้วยชื่อ tag ที่ต้องการ"
+                       [readonly]="is_readonly"></tag-input>
+          </div>
+        </div>
+
+        <div class="task-content-group"
+             *ngIf="is_edit_mode
+                  && is_assigner
+                  && !prevent_edit
+                  && !!formData?.TaskIsCompleted === false
+                  && formData?.TaskType !== 4">
+          <div class="task-content-label-light">
+            <a class="task-cancel-btn" (click)="cancelTask()" [class.disabled]="submitting">
+              <i class="fa fa-fw fa-trash-o"></i> ยกเลิกงานนี้
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="modal-content-right" *ngIf="is_edit_mode">
+      <div class="modal-body comment-section">
+        <div class="task-content-group no-margin">
+          <div class="task-content-label">
+            <i class="fa fa-fw fa-comment"></i> ความคิดเห็น
+            <a href='' class="task-content-label-tool pull-right"
+               (click)="toggleChatEditHistory()"
+               [tooltip]="(comment_task_history ? 'ซ่อนประวัติการแก้ไขงาน' :'แสดงประวัติการแก้ไขงาน')"
+               container="body">
+              <i class="fa fa-pencil-square-o"
+                 [ngClass]="{'text-info':comment_task_history ,'text-muted':!comment_task_history}"></i>
+            </a>
+          </div>
+
+          <div class="task-comment direct-chat direct-chat-primary">
+            <div class="direct-chat-messages" ngx-auto-scroll lock-y-offset="10">
+              <ng-container *ngFor="let comment of comments">
+                <div *ngIf="comment.TC_Type!==3 || comment_task_history" class="direct-chat-msg-line">
+                  <div class="direct-chat-msg"
+                       [ngClass]="{'right':comment.isSelf, 'left':!comment.isSelf}">
+                    <!-- Comment User Name And TimeStamp -->
+                    <div class="direct-chat-info clearfix">
+                      <span class="direct-chat-name"
+                            [ngClass]="{'pull-left':!comment.isSelf, 'pull-right':comment.isSelf}"
+                      >{{comment.TC_USER_EMP_NAME}}</span>
+
+                      <span title="{{comment.TC_Date | momentFormat:'HH:mm, DD/MM/YYYY'}}"
+                            class="direct-chat-timestamp"
+                            [ngClass]="{'pull-left':comment.isSelf, 'pull-right':!comment.isSelf}"
+                      >{{comment.TC_Date | momentFormat:'D MMM HH:mm'}}</span>
+                    </div>
+
+                    <!-- Comment User Avatar -->
+                    <img class="direct-chat-img"
+                         [src]="avatarUrl + '/emp' +  + comment.TC_USER_EMP_KEY + '_40x40.png'"
+                         onerror="this.src='assets/images/user.png';">
+
+                    <!-- Comment Message -->
+                    <div class="direct-chat-text"
+                         [ngClass]="{'event-log':comment.TC_Type!==1}">
+                      <span [innerHTML]="comment.TC_Comments"></span>
+
+                      <!-- Comment File Attachment -->
+                      <div *ngIf="comment.attachList?.length > 0" class="comment-attach clearfix">
+                        <div class="comment-attach-label">ไฟล์แนบ</div>
+                        <div *ngFor="let file of comment.attachList"
+                             class="comment-attach-item">
+                          <a *ngIf="file.isImage" target="_blank" [href]="file.fileUrl" class="attach-img">
+                            <img [src]="file.fileUrl">
+                          </a>
+
+                          <a *ngIf="!file.isImage" target="_blank" href="{{file.fileUrl}}" class="attach-icon">
+                            <i class="fa" [ngClass]="fileIconClass[file.filExtension] || 'fa-file-text-o'"></i>
+                          </a>
+
+                          <div class="attach-info">
+                            <span class="attach-name" title="{{file.fileName}}">{{file.fileName}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+
+              <div *ngIf="comment_fetching" class="loading-container">
+                <svg class="circular">
+                  <circle class="path" cx="20" cy="20" r="16" fill="none" stroke-width="3" stroke-miterlimit="10"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="direct-chat-input">
+              <div class="input-group">
+                <textarea elastic
+                          #commentElastic="elastic"
+                          [(ngModel)]="comment_form.message"
+                          name="commentMessage"
+                          placeholder="แสดงความคิดเห็น..."
+                          autocomplete="off"
+                          class="form-control comment-text"></textarea>
+
+                <span class="input-group-btn">
+                  <label class="btn btn-flat comment-attach-btn">
+                    <input type="file" (change)="commentAttachFilesAdd($event)" multiple>
+                    <i *ngIf="!comment_form.attachment?.length" class="fa fa-paperclip"></i>
+                    <span *ngIf="comment_form.attachment?.length > 0" class=" badge bg-blue ">
+                      {{comment_form.attachment.length}}
+                    </span>
+                  </label>
+
+                  <button type="button"
+                          (click)="commentSubmit()"
+                          class="btn  btn-flat comment-submit-btn"
+                          [ngClass]="{ 'btn-primary' : !comment_submiting, 'btn-default':comment_submiting }"
+                          [disabled]="comment_submiting || comment_fetching">
+                    Send
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="is_add_mode" class="modal-footer" (mouseover)="show_invalid = true">
+    <button type="button"
+            (click)="newTaskSubmit()"
+            [disabled]="taskform.invalid || submitting"
+            class="btn btn-primary btn-flat">
+      <i class="fa fa-floppy-o"></i> บันทึก
+    </button>
+  </div>
+
+  <div *ngIf="readonly === undefined" class="loading-container">
+    <div class="loading-message">Loading...</div>
+  </div>
+  <div *ngIf="readonly === undefined" class="blocking-bg"></div>
+</form>
+
+<ng-template #empTagInput let-_this="_this">
+  <div class="form-control tag-container emp-tag-input"
+       [ngClass]="_this.class"
+       [class.readonly]="_this.readonly"
+       [class.disabled]="_this.disabled"
+       [class.required]="_this.required"
+       [ngStyle]="_this.ngStyle">
+    <div class="tag-list">
+      <ng-template [ngTemplateOutlet]="_this.tagTemplate"
+                   [ngTemplateOutletContext]="{_this:_this}"></ng-template>
+    </div>
+    <input #textInput
+           [(ngModel)]="_this.searchModel"
+           (keyup)="_this.searchModelChange.emit(_this.searchModel)"
+           [hidden]="(_this.disabled || _this.readonly)"
+           [typeahead]="_this.tagList"
+           [typeaheadOptionField]="'name'"
+           [typeaheadOptionsLimit]="_this.typeaheadLimit"
+           [typeaheadItemTemplate]="empTypeheadItem"
+           (typeaheadOnSelect)="_this.typeheadOnSelect($event.item)"
+           [ngStyle]="{width:((_this.value?.length === 0) ? '90%' : ( 20 + (_this.searchModel?.length * 10) + 'px' ))}"
+           autocomplete="off"
+           class="text-input"
+           placeholder="{{(_this.value?.length === 0) ? _this.placeholder : ''}}">
+  </div>
+</ng-template>
+
+<ng-template #approveEmpTag let-_this="_this">
+  <span *ngFor="let tag of _this.value"
+        class="emp-tag approve-emp-tag"
+        [ngClass]="{'approved':(tag?.is_approved === true) ,'reject':(tag?.isApproved === false)}">
+    <img class="avatar"
+         [src]="avatarUrl + '/emp' + tag.userEmpKey + '_40x40.png'"
+         onerror="this.src='assets/images/user.png';">
+    <span class="emp-name">{{tag.name}}</span>
+    <i class="status-icon fa"
+       [ngClass]="{ 'fa-check-circle':(tag?.is_approved === true) ,
+                    'fa-times-circle':(tag?.is_approved === false),
+                    'fa-circle-o':(tag?.is_approved === null)}"></i>
+    <button type="button"
+            *ngIf="(!_this.disabled && !_this.readonly)"
+            (click)="_this.removeTag(tag)"
+            class="close"><span aria-hidden="true">&times;</span></button>
+  </span>
+</ng-template>
+
+<ng-template #empTag let-_this="_this">
+  <span *ngFor="let tag of _this.value"
+        class="emp-tag"
+        tooltip="{{tag.user_email}}">
+    <img class="avatar"
+         [src]="avatarUrl + '/emp' + tag.userEmpKey + '_40x40.png'"
+         onerror="this.src='assets/images/user.png';">
+    <span class="emp-name">{{tag.name}}</span>
+    <button type="button"
+            *ngIf="(!_this.disabled && !_this.readonly)"
+            (click)="_this.removeTag(tag)"
+            class="close"><span aria-hidden="true">&times;</span></button>
+  </span>
+</ng-template>
+
+<ng-template #empTypeheadItem let-item="item">
+  <div class="emp-typehead-item">
+    <img class="avatar"
+         [src]="avatarUrl + 'emp' + item.userEmpKey+ '_40x40.png'"
+         onerror="this.src='assets/images/user.png';">
+    <span>{{item.name}}</span>
+  </div>
+</ng-template>

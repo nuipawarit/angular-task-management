@@ -1,0 +1,50 @@
+.tag-container {
+  cursor: text;
+  padding: 6px;
+  padding-bottom: 1px;
+  min-height: 34px;
+  &.focus {
+    border-color: #3c8dbc;
+    box-shadow: none;
+  }
+  &.readonly,
+  &[readonly]{
+    background-color: #eee;
+  }
+
+  > *:not([hidden]) {
+    display: inline;
+    cursor: auto;
+  }
+
+  .tag-list {
+    .tag {
+      display: inline-block;
+      color: #0088cc;
+      background: #E1F5FE;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+  }
+
+  .text-input {
+    height: 20px;
+    margin-left: 3px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: none;
+    &:focus {
+      -webkit-box-shadow: none; // iOS <4.3 & Android <4.1
+      box-shadow: none;
+      outline: none;
+    }
+  }
+
+  &.multi-line {
+    height: initial;
+  }
+}

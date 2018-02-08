@@ -1,0 +1,31 @@
+<ng-template [ngTemplateOutlet]="template || defaultTemplate" [ngTemplateOutletContext]="{_this:this}"></ng-template>
+
+<ng-template #defaultTemplate let-_this="_this">
+  <div class="form-control tag-container"
+       [ngClass]="_this.class"
+       [class.readonly]="_this.readonly"
+       [class.disabled]="_this.disabled"
+       [class.required]="_this.required"
+       [ngStyle]="_this.ngStyle">
+    <div class="tag-list">
+      <ng-template [ngTemplateOutlet]="_this.tagTemplate || defaultTagTemplate"
+                   [ngTemplateOutletContext]="{_this:this}"></ng-template>
+    </div>
+    <input #textInput
+           [(ngModel)]="_this.searchModel"
+           (keyup)="_this.searchModelChange.emit(_this.searchModel)"
+           [hidden]="(_this.disabled || _this.readonly)"
+           [typeahead]="_this.tagList"
+           [typeaheadOptionsLimit]="_this.typeaheadLimit"
+           (typeaheadOnSelect)="_this.typeheadOnSelect($event.item)"
+           [ngStyle]="{width:( (!_this.value?.length) ? '90%' : ( 20 + (_this.searchModel?.length * 10) + 'px' ) )}"
+           autocomplete="off"
+           class="text-input"
+           placeholder="{{ (!_this.value?.length) ? _this.placeholder : ''}}">
+  </div>
+</ng-template>
+
+
+<ng-template #defaultTagTemplate let-_this="_this">
+  <span *ngFor="let tag of _this.value" class="tag" (click)="_this.removeTag(tag)">{{tag}} </span>
+</ng-template>

@@ -1,0 +1,32 @@
+<div class="task-box-container">
+  <div class="task-box"
+       [ngClass]="{'close-pendding':(task.TaskCloseReq && !task.TaskIsCompleted)}"
+       (click)="editTask(task)"
+       [title]="(task.TaskCloseReq && !task.TaskIsCompleted) ? 'รออนุมัติปิดงาน' : ''">
+
+    <p class="task-title" [innerHTML]="task.TaskTitle | highlight:highlightText"></p>
+
+    <span class="task-status-icon">
+      <i class="noti-status fa"
+         [title]="task.HasNotify > 0 ? ('มี ' + task.HasNotify + ' เหตุการณ์ใหม่') : ''"
+         [ngClass]="{'fa-bell-slash-o muted': !task.TaskSubscription,
+             'fa-bell-o': task.TaskSubscription,
+             'notify': task.HasNotify > 0 }"></i>
+    </span>
+
+    <app-expect-date *ngIf="task.TaskExpectDate" [date]="task.TaskExpectDate"></app-expect-date>
+
+    <span *ngIf="task.TaskType !== 1"
+          class="tag"
+          [ngClass]="(TaskTypeClass[task.TaskType] || 'tag-blue')">#{{task.TaskTypeName}}</span>
+
+    <span *ngIf="task.TaskCategoryName"
+          class="tag tag-default">#{{task.TaskCategoryName}}</span>
+
+    <ng-container *ngIf="task.TaskTag">
+      <span *ngFor="let tag of task.TaskTag | split:',' " class="tag tag-default">#{{tag}}</span>
+    </ng-container>
+
+    <div class="clearfix"></div>
+  </div>
+</div>

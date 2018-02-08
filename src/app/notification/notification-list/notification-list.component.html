@@ -1,0 +1,13 @@
+<ul class="menu" [style.maxHeight]="maxHeight" (scroll)="onScroll()">
+  <li *ngFor="let noti of data" >
+    <a href (click)="onListClick(noti)"
+       [class.readed]="noti.TaskNotiIsReaded">
+      <i class="fa noti-icon" [ngClass]="noti.iconClass"></i>
+      <div class="noti-msg" [innerHtml]="noti.TaskNotiMsg"></div>
+      <div class="text-muted noti-ts" [appTimeAgo]="noti.TaskNotiTS" title="{{noti.TaskNotiTS}}"></div>
+      <span *ngIf="markReadBtn && !noti.TaskNotiIsReaded"
+            (click)="onMarkReadBtnClick(noti)"
+            class="mark-read-btn"><i class="fa fa-check-circle small"></i> ทำเครื่องหมายอ่านแล้ว</span>
+    </a>
+  </li>
+</ul>

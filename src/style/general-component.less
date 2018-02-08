@@ -1,0 +1,46 @@
+/*
+ * Component: modal
+ * ----------------
+ */
+.modal {
+  background: none;
+}
+
+.modal-header.ui-draggable-handle {
+  cursor: move;
+}
+bs-modal-backdrop + .modal {
+  background: none;
+}
+.modal {
+  background: rgba(0,0,0,0.3);
+}
+
+/*
+ * Component: Form
+ * ---------------
+ */
+.form-group-sm .form-control {
+  border-radius: 0px;
+}
+
+/*
+ * Component: Dropdown menus
+ * -------------------------
+ */
+.dropdown-menu {
+  z-index: 1000;
+  > li > .checkbox {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+  }
+}
+
+bs-dropdown-container {
+  width: 100%;
+}

@@ -1,0 +1,26 @@
+<div *ngFor="let group of groups" class="task-group">
+  <div class="task-group-heading">
+    <div class="task-group-title">
+      <a class="task-group-toggle" (click)="group.isOpen = !group.isOpen">
+        <img *ngIf="group.reponseByEmpKey"
+             [src]="avatarUrl + 'emp' + group.reponseByEmpKey + '_40x40.png'"
+             onerror="this.src='assets/images/user.png' ; "
+             class="avatar">
+
+        <i *ngIf="group.icon" class="fa"
+           [ngClass]="group.icon + ' ' + group.class"></i>
+        <span [ngClass]="group.class"> {{group.name}}</span>
+
+        <i class="fa" [ngClass]="{'fa-caret-down': group.isOpen, 'fa-caret-right': !group.isOpen}"></i>
+        <span *ngIf="group.tasks.length > 0" class="pull-right label">{{group.tasks.length}}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="reponsed-collapse" [collapse]="!group.isOpen">
+    <div class="task-group-body">
+      <app-task-box *ngFor="let task of group.tasks" [task]="task" [highlightText]="searchText"></app-task-box>
+      <app-empty-task-box *ngIf="group.tasks.length === 0"></app-empty-task-box>
+    </div>
+  </div>
+</div>

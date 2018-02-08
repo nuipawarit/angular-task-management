@@ -1,0 +1,95 @@
+<div class="flex-wrapper">
+  <section class="content-header" [hidden]="fullScreenMode">
+    <h1>
+      ทะเบียนงาน
+      <small>งานที่รออนุมัติ</small>
+    </h1>
+
+    <ol class="breadcrumb hidden-xs hidden-sm">
+      <li><i class="fa fa-home"></i> Home</li>
+      <li><i class="fa fa-tasks"></i> ทะเบียนงาน</li>
+      <li class="active">งานที่รออนุมัติ</li>
+    </ol>
+  </section>
+
+  <section class="content flex-content">
+    <app-task-navbar (onSubmit)="getTaskData($event)"
+                     [canAddTask]="false"
+                     [saveState]="true"
+                     [reponseByLabel]="'ผู้อนุมัติ'"
+                     (fullScreenModeChange)="fullScreenToggle($event)"></app-task-navbar>
+
+    <div class="tasklist-wrapper">
+      <div class="tasklist-container">
+        <div *ngIf="tasks" class="tasklist table-view">
+          <ngx-datatable [rows]="tasks"
+                         [columnMode]="'force'"
+                         [headerHeight]="40"
+                         [rowHeight]="40"
+                         [footerHeight]="false"
+                         [scrollbarV]="true"
+                         [rowClass]="getRowClass"
+                         (activate)="onActivate($event)"
+                         class="bootstrap fullscreen">
+
+            <ngx-datatable-column name="เลขที่" prop="TaskID" [maxWidth]="70"></ngx-datatable-column>
+
+            <ngx-datatable-column name="ประเภท" prop="TaskTypeName">
+              <ng-template let-column="column" let-sort="sortFn" ngx-datatable-header-template>
+                <span class="hidden-sm hidden-xs">{{column.name}}</span>
+              </ng-template>
+
+              <ng-template let-task="row" ngx-datatable-cell-template>
+                <span class="hidden-sm hidden-xs tag" [ngClass]="(TaskTypeClass[task.TaskType] || 'tag-blue')">{{task.TaskTypeName}}</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="หัวข้องาน" prop="TaskTitle" [width]="300"></ngx-datatable-column>
+
+            <ngx-datatable-column name="ผู้มอบหมาย" prop="AssignedName">
+              <ng-template let-task="row" ngx-datatable-cell-template>
+                {{task.AssignedName | firstName}}
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="ผู้อนุมัติ" prop="Ar_EmpName1">
+              <ng-template let-task="row" ngx-datatable-cell-template>
+                <span *ngIf="task.Ar_EmpName1">{{task.Ar_EmpName1 | firstName}}</span>
+                <span *ngIf="task.Ar_EmpName2"> / {{task.Ar_EmpName2 | firstName}}</span>
+                <span *ngIf="task.Ar_EmpName3"> / {{task.Ar_EmpName3 | firstName}}</span>
+                <span *ngIf="task.TaskCloserName">{{task.TaskCloserName | firstName}}</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="วันที่เพิ่มงาน" prop="AssignedDate">
+              <ng-template let-column="column" let-sort="sortFn" ngx-datatable-header-template>
+                <span class="hidden-sm hidden-xs">{{column.name}}</span>
+              </ng-template>
+
+              <ng-template let-task="row" ngx-datatable-cell-template>
+                <div class="text-muted hidden-sm hidden-xs">{{task.AssignedDate | dateThai}}</div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="คาดว่าจะเสร็จ" prop="TaskDueDateTo">
+              <ng-template let-column="column" let-sort="sortFn" ngx-datatable-header-template>
+                <span class="hidden-sm hidden-xs">{{column.name}}</span>
+              </ng-template>
+
+              <ng-template let-task="row" ngx-datatable-cell-template>
+                <div class="text-muted hidden-sm hidden-xs">{{task.TaskDueDateTo | dateThai}}</div>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </div>
+
+        <div *ngIf="!tasks" class="loading-container">
+          <div class="loading-message">กำลังค้นหางาน</div>
+          <svg class="circular">
+            <circle class="path" cx="20" cy="20" r="16" fill="none" stroke-width="3" stroke-miterlimit="10"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

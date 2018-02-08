@@ -1,0 +1,25 @@
+<div class="flex-wrapper">
+  <section class="content-header" [hidden]="fullScreenMode">
+    <h1>
+      ทะเบียนงาน
+      <small>ตามแผนการทำงาน</small>
+    </h1>
+
+    <ol class="breadcrumb hidden-xs hidden-sm">
+      <li><i class="fa fa-home"></i> Home</li>
+      <li><i class="fa fa-tasks"></i> ทะเบียนงาน</li>
+      <li class="active">ตามแผนการทำงาน</li>
+    </ol>
+  </section>
+
+  <section class="content flex-content">
+    <app-task-navbar (onSubmit)="getTaskData($event)"
+                     [canAddTask]="true"
+                     [saveState]="true"
+                     (fullScreenModeChange)="fullScreenToggle($event)"></app-task-navbar>
+    <app-task-columns [columns]="columns"
+                      [hasGroup]="columnHasGroup"
+                      [groupBy]="columnGroupBy"
+                      [searchText]="searchText"></app-task-columns>
+  </section>
+</div>

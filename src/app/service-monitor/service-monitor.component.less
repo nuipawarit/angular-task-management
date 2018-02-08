@@ -1,0 +1,19 @@
+@import "../../style/scrollbar.less";
+
+.service-controller {
+  margin-bottom: 10px;
+}
+
+.service-log {
+  width: 100%;
+  height: 300px;
+  border-radius: 0px;
+  color: #616161;
+
+  .scrollbar (
+    @color: rgba(0, 0, 0, 0.25),
+    @background : rgba(0,0,0,0.05),
+    @width: 6px,
+    @radius: 2px
+  );
+}

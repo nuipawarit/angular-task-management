@@ -1,0 +1,834 @@
+@import "../../../../node_modules/admin-lte/build/bootstrap-less/mixins.less";
+@import "../../../../node_modules/admin-lte/build/bootstrap-less/variables.less";
+@import "../../../../node_modules/admin-lte/build/less/variables.less";
+@import "../../../../node_modules/admin-lte/build/less/mixins.less";
+@import "../../../style/scrollbar.less";
+
+/deep/ .task-modal {
+
+  @media (min-width: @screen-md) {
+    &.modal-dialog {
+      width: 700px
+    }
+  }
+
+  @media (min-width: @screen-lg) {
+    &.modal-dialog {
+      width: 1170px;
+    }
+
+    &.add-model {
+      &.modal-dialog {
+        width: 700px;
+      }
+    }
+
+    .modal-content-flex {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .modal-content-left {
+      //margin: 10px 5px 10px 0;
+      width: 700px;
+      max-height: ~"calc(100vh - 160px)";
+
+      .scrollbar (
+        @color: rgba(0, 0, 0, 0.1),
+        @background : rgba(0,0,0,0.05),
+        //@shadow : rgba(0,0,0,0.1),
+        @width: 6px,
+        @radius: 10px
+      );
+    }
+
+    &.has-footer {
+      .modal-content-left {
+        max-height: ~"calc(100vh - 225px)";
+      }
+    }
+
+    .modal-content-right {
+      width: 470px;
+
+      .direct-chat-messages {
+        height: ~"calc(100vh - 265px) !important";
+        //max-height: 600px;
+        .scrollbar (
+          @color: rgba(0, 0, 0, 0.1),
+          @background : rgba(0,0,0,0.05),
+          //@shadow : rgba(0,0,0,0.1),
+          @width: 6px,
+          @radius: 10px
+        );
+      }
+    }
+
+    &.has-footer {
+      .modal-content-right {
+        max-height: ~"calc(100vh - 330px)";
+      }
+    }
+  }
+
+  &.add-mode {
+    .modal-content-left {
+      width: 100%;
+    }
+
+    .modal-content-right {
+      display: none;
+    }
+  }
+
+  [readonly],
+  .readonly {
+    cursor: initial;
+    pointer-events: none;
+  }
+  .form-control.readonly,
+  .form-control[readonly],
+  .select2-container.select2-container-disabled .select2-choice,
+  .select2-container.select2-container-disabled .select2-choices {
+    /*background-color: #f2f2f2 !important;*/
+    border-color: rgba(0, 0, 0, 0) !important;
+    cursor: initial;
+    pointer-events: none;
+
+    &:focus {
+      border-color: rgba(0, 0, 0, 0) !important;
+    }
+  }
+  .modal-title[readonly] {
+    background-color: #fff !important;
+  }
+  .task-content {
+    .form-control[readonly] {
+      background-color: #eee;
+    }
+  }
+
+  .task-form.show-invalid {
+    .form-control.ng-invalid,
+    .form-control.ng-invalid .select2-choice,
+    ng-select .ng-invalid .below {
+      border-color: #dd4b39;
+      box-shadow: none;
+    }
+    .help-block.has-error {
+      color: #dd4b39;
+    }
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #e5e5e5;
+
+    .modal-tool {
+      margin-top: -5px;
+      margin-left: -5px;
+      margin-right: 0;
+      margin-bottom: 5px;
+      vertical-align: top;
+    }
+
+    .task-id {
+      font-size: 12px;
+      color: @text-muted;
+    }
+
+    .task-type {
+      font-size: 13px;
+      color: @text-muted;
+    }
+
+    .form-inline {
+      display: inline-block;
+
+      label {
+        color: @gray-light;
+      }
+    }
+
+    .header-label {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .header-btn {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      white-space: nowrap;
+      color: @light-blue;
+      background-color: transparent;
+      box-shadow: none;
+      border: none;
+      padding: 0;
+
+      &:hover {
+        color: lighten(@light-blue, 15%);
+        cursor: pointer;
+      }
+      &.disabled {
+        color: lighten(@gray-base, 70%) !important;
+        pointer-events: none;
+      }
+    }
+
+    .header-btn-group {
+      display: inline-block;
+    }
+
+    .subscription-btn {
+      font-size: 16px;
+      .fa-bell:hover:before {
+        content: "\f1f6";
+      }
+      .fa-bell-slash:hover:before {
+        content: "\f0f3";
+      }
+    }
+
+    .close-btn {
+      font-size: 16px;
+      color: @gray;
+      &:hover {
+        color: @gray-light;
+      }
+    }
+
+    .modal-title {
+      border-color: rgba(0, 0, 0, 0);
+      padding: 0;
+      font-size: 30px;
+      height: 40px;
+      &:focus {
+        border-color: @input-border-focus;
+      }
+    }
+  }
+
+  .modal-footer {
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .modal-body {
+
+    .task-content {
+      margin-left: 5px;
+      margin-bottom: 20px;
+    }
+
+    .task-content-group {
+      margin-bottom: 20px;
+
+      .task-content-label {
+        margin-bottom: 10px;
+        color: #999;
+        font-weight: bold;
+      }
+      .task-content-label-light {
+        margin-bottom: 10px;
+        color: #999;
+      }
+      .task-content-label-tool {
+        //font-weight: normal;
+        > .fa {
+          font-size: 16px;
+
+          &.text-muted {
+            color: #b3b3b3;
+          }
+        }
+      }
+
+      .task-content {
+        margin-left: 20px;
+        margin-bottom: 0;
+      }
+    }
+
+    .help-block {
+      font-size: 12px;
+    }
+
+    .info-block {
+      margin-bottom: 0px;
+    }
+
+    .well {
+      border-radius: 0;
+      background: #fafafa;
+    }
+
+    &.comment-section {
+      background: @gray-lighter;
+      .task-content-label {
+        color: #777;
+      }
+    }
+  }
+
+  .task-detail {
+    cursor: pointer;
+    //white-space: pre-wrap;
+    margin-bottom: 20px;
+
+    &.readonly {
+      cursor: auto;
+      pointer-events: auto;
+    }
+  }
+
+  ul.task-attach {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: #666;
+
+    .noselect() {
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Chrome/Safari/Opera */
+      -khtml-user-select: none; /* Konqueror */
+      -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+      user-select: none; /* Non-prefixed version, currently not supported by any browser */
+    }
+
+    li.task-attach-item {
+      position: relative;
+      float: left;
+      width: 110px;
+      height: 120px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      margin-right: 15px;
+      cursor: pointer;
+      .noselect();
+      &:hover {
+        background: @gray-lighter;
+      }
+
+      &.ng-enter {
+        animation: fadeIn 1s ease-out;
+      }
+      &.ng-leave {
+        display: none;
+      }
+
+      .close {
+        display: none;
+        position: absolute;
+        right: 2px;
+        top: 2px;
+      }
+      &:hover > .close {
+        display: block;
+      }
+
+      .attach-icon {
+        color: #666;
+        display: block;
+        text-align: center;
+        font-size: 35px;
+        line-height: 70px;
+      }
+
+      .attach-img {
+        width: 110px - 2px;
+        height: 70px;
+        color: #666;
+        background-color: #fff;
+        text-align: center;
+        vertical-align: middle;
+        display: table-cell;
+        .box-shadow(0 2px 4px 0 rgba(0, 0, 0, 0.2));
+        img {
+          max-width: 110px - 2px;
+          max-height: 70px;
+        }
+      }
+
+      .attach-info {
+        display: block;
+        height: 50px;
+        padding: 12px 6px;
+        text-align: center;
+
+        .attach-name {
+          font-size: 11px;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    .add-attach-btn {
+      display: block;
+      position: relative;
+      float: left;
+      border: 2px dashed #ddd;
+      width: 110px;
+      height: 120px;
+      margin-bottom: 10px;
+      margin-right: 15px;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      text-align: center;
+      font-weight: 400;
+      color: @link-color;
+      &:hover {
+        cursor: pointer;
+        color: @link-hover-color;
+      }
+
+      .fa {
+        display: block;
+        font-size: 26px;
+        line-height: 50px;
+      }
+
+      &.new {
+        border: 1px solid #ddd;
+        font-weight: 400;
+        color: #444;
+        background-color: #fff;
+        width: auto;
+        height: auto;
+        margin: 0;
+        padding: 6px 12px;
+        &:hover {
+          border-color: #adadad;
+          background-color: darken(#fff, 5%);
+        }
+
+        .fa {
+          display: inline-block;
+          font-size: inherit;
+          line-height: 1;
+        }
+      }
+
+      input[type=file] {
+        display: none;
+      }
+    }
+  }
+
+  .task-priority {
+  }
+
+  .task-assigner {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #eee;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 0;
+    box-shadow: none;
+
+    .avatar {
+      border-radius: 50%;
+      height: 26px;
+      margin-right: 8px;
+      margin-top: -3px;
+      margin-left: -8px;
+    }
+  }
+
+  .task-tag-input {
+    .tag-list .tag {
+      color: #0055cc;
+      background: #d9edf7;
+      border: 1px solid rgba(51, 122, 183, 0.2);
+      border-radius: 2px;
+      padding: 2px 4px;
+    }
+  }
+
+  .task-cancel-btn {
+    &:hover {
+      color: lighten(@light-blue, 15%);
+      cursor: pointer;
+    }
+    &.disabled,
+    &[disabled] {
+      cursor: not-allowed;
+      color: lighten(@gray-base, 70%) !important;
+      pointer-events: none;
+      .opacity(.65);
+      .box-shadow(none);
+    }
+  }
+
+  .task-comment {
+    .dont-break-out() {
+      /* These are technically the same, but use both */
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+    }
+
+    .direct-chat-messages {
+      height: 300px;
+      padding-bottom: 20px;
+
+      .direct-chat-msg-line {
+        width: 100%;
+        .clearfix();
+
+        &.ng-enter {
+          animation: fadeInUp 0.3s ease-out;
+        }
+      }
+
+      .direct-chat-msg {
+        //width: 100%;
+        max-width: 400px;
+        margin-bottom: 20px;
+        &.left {
+          float: left;
+          .direct-chat-name {
+            margin-right: 10px;
+          }
+        }
+        &.right {
+          float: right;
+          .direct-chat-name {
+            margin-left: 10px;
+          }
+        }
+      }
+
+      .direct-chat-loading {
+
+      }
+    }
+
+    .direct-chat-text {
+      .dont-break-out();
+
+      &.event-log {
+        &:after,
+        &:before {
+          display: none;
+        }
+
+        font-size: 12px;
+        font-weight: bold;
+        color: #888;
+        border-color: #888;
+        background-color: rgba(0, 0, 0, 0);
+      }
+
+      .comment-attach {
+        position: relative;
+        margin-left: -10px;
+        margin-right: -10px;
+        margin-bottom: -5px;
+        margin-top: 5px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 10px;
+        color: #666;
+        background-color: #fff;
+
+        .comment-attach-label {
+          font-size: 12px;
+          font-weight: 700;
+          color: #999;
+          margin-bottom: 10px;
+        }
+
+        .comment-attach-item {
+          position: relative;
+          float: left;
+          width: 90px;
+          height: 90px;
+          margin-right: 10px;
+          margin-bottom: 10px;
+          cursor: pointer;
+          border: 1px solid #ddd;
+          &:hover {
+            background: @gray-lighter;
+          }
+
+          .attach-icon {
+            color: #666;
+            display: block;
+            text-align: center;
+            font-size: 35px;
+            line-height: 60px;
+          }
+
+          .attach-img {
+            width: 90px - 2px;
+            height: 60px;
+            color: #666;
+            background-color: #fff;
+            text-align: center;
+            vertical-align: middle;
+            display: table-cell;
+            .box-shadow(0 2px 4px 0 rgba(0, 0, 0, 0.2));
+            img {
+              max-width: 90px - 2px;
+              max-height: 60px;
+            }
+          }
+
+          .attach-info {
+            display: block;
+            height: 30px;
+            padding: 6px 6px;
+            text-align: center;
+
+            .attach-name {
+              font-size: 11px;
+              font-weight: normal;
+              display: block;
+              display: -webkit-box;
+              -webkit-line-clamp: 1;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+    }
+
+    &.direct-chat-primary .right > .direct-chat-text {
+      &.event-log {
+        color: #3c8dbc;
+        border-color: #3c8dbc;
+      }
+
+      a {
+        color: #FFF176;
+        &:hover {
+          color: lighten(#FFF176, 15%);
+        }
+      }
+    }
+
+    &.direct-chat-primary .direct-chat-text {
+      a {
+        color: #0D47A1;
+        &:hover {
+          color: lighten(#0D47A1, 15%);
+        }
+      }
+    }
+  }
+
+  .direct-chat-input {
+    padding-top: 10px;
+
+    .comment-text {
+      resize: none;
+      height: 34px;
+      position: absolute;
+      bottom: 0;
+      width: ~"calc(100% - 105px)";
+    }
+
+    .comment-attach-btn {
+      color: @link-color;
+      font-size: 16px;
+      line-height: 20px;
+      height: 34px;
+      width: 50px;
+      border: 1px solid #d2d6de;
+      border-left: none;
+      background-color: #fff;
+
+      input[type=file] {
+        display: none;
+      }
+    }
+
+    .comment-submit-btn {
+      height: 34px;
+      width: 57px;
+      transition: 200ms ease-out color;
+    }
+  }
+
+  .task-form {
+    > .loading-container {
+      top: 200px;
+      background: #fff;
+      padding: 10px 20px 0px 20px;
+      z-index: 4;
+    }
+    > .blocking-bg {
+      background: rgba(255, 255, 255, 0.5);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 3;
+    }
+  }
+}
+
+// Instant call mode
+/deep/ .task-modal:not(.modal-dialog) {
+  .modal-content-flex {
+    display: block;
+  }
+
+  .modal-content-left {
+    width: 100%;
+    max-height: initial;
+  }
+
+  &.has-footer .modal-content-left {
+    max-height: initial;
+  }
+
+  .modal-content-right {
+    width: 100%;
+
+    .direct-chat-messages {
+      min-height: 300px;
+      max-height: initial;
+      height: initial !important;
+    }
+  }
+
+  &.has-footer .modal-content-right {
+    max-height: initial;
+  }
+}
+
+.emp-tag-input.tag-container {
+  cursor: text;
+  padding: 6px;
+  min-height: 34px;
+  height: initial;
+  padding-bottom: 2px;
+  &.focus {
+    border-color: #3c8dbc;
+    box-shadow: none;
+  }
+  &.readonly,
+  &[readonly] {
+    background-color: #eee;
+  }
+
+  > *:not([hidden]) {
+    display: inline;
+    cursor: auto;
+  }
+
+  .tag-list {
+    .emp-tag {
+      display: inline-block;
+      margin-right: 4px;
+      margin-bottom: 4px;
+      padding-right: 8px;
+      color: #333;
+      background: #f4f4f4;
+      border-radius: 16px;
+      box-shadow: inset 0 0 0 1px rgba(10, 15, 20, 0.15);
+
+      .avatar {
+        border-radius: 50%;
+        height: 26px;
+        margin: 3px 3px 3px 3px;
+      }
+
+      .emp-name {
+        line-height: 32px;
+        vertical-align: middle;
+        color: #666;
+      }
+
+      .close {
+        line-height: 32px;
+        vertical-align: middle;
+        font-size: 16px;
+        margin-left: 5px;
+      }
+    }
+    .approve-emp-tag {
+      background: #fff;
+      //transition: 0.4s ease-out box-shadow;
+
+      .emp-name,
+      .status-icon {
+        transition: 0.4s ease-out color;
+      }
+      .status-icon {
+        color: #dadadc;
+        font-size: 16px;
+        line-height: 32px;
+        vertical-align: middle;
+      }
+
+      &.approved {
+        box-shadow: inset 0 0 0 1px #00a65a;
+        .emp-name,
+        .status-icon {
+          color: #008c46;
+        }
+      }
+      &.reject {
+        box-shadow: inset 0 0 0 1px #d93c34;
+        .emp-name,
+        .status-icon {
+          color: #bf362c;
+        }
+      }
+    }
+  }
+
+  .text-input {
+    margin-left: 4px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: none;
+    height: 32px;
+    &:focus {
+      -webkit-box-shadow: none; // iOS <4.3 & Android <4.1
+      box-shadow: none;
+      outline: none;
+    }
+  }
+
+  &.multi-line {
+    height: initial;
+  }
+}
+
+.emp-typehead-item {
+  .avatar {
+    border-radius: 50%;
+    height: 26px;
+    margin: 3px 3px 3px 3px;
+  }
+}
+
+ng-select .avatar {
+  border-radius: 50%;
+  height: 26px;
+  margin-right: 4px;
+  margin-top: 0px;
+  margin-left: -4px;
+}

@@ -1,0 +1,18 @@
+{
+  "name": "ระบบทะเบียนงาน",
+  "short_name": "Task v3",
+  "theme_color": "#1693a5",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "https://www.2smetal.com/task-v3/assets/images/logo/2S_logo_favicon.ico",
+      "size": "32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "gcm_sender_id": "103953800507",
+  "gcm_user_visible_only": true
+}

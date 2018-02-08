@@ -1,0 +1,81 @@
+@import "../../../../node_modules/admin-lte/build/bootstrap-less/mixins.less";
+@import "../../../../node_modules/admin-lte/build/bootstrap-less/variables.less";
+@import "../../../../node_modules/admin-lte/build/less/variables.less";
+@import "../../../../node_modules/admin-lte/build/less/mixins.less";
+
+.tasklist-filter {
+  > * {
+    vertical-align: top;
+  }
+  > .form-group {
+    margin-bottom: 10px;
+  }
+}
+
+@media (min-width: @screen-sm-min) {
+  .tasklist-filter {
+    margin-bottom: 10px;
+  }
+}
+
+.task-search {
+  .dropdown-toggle {
+    background: #fff;
+    border-color: #ddd;
+  }
+}
+
+/deep/ .task-search-dropdown-menu {
+  padding: 10px;
+  border-radius: 0;
+  border-color: #ccc;
+
+  .select2-container {
+    .select2-selection--single {
+      padding: 5px;
+      height: 30px;
+      font-size: 12px;
+
+      .select2-selection__rendered {
+        line-height: 26px;
+      }
+
+      .select2-selection__arrow {
+        height: 26px;
+        top: 2px;
+      }
+    }
+  }
+}
+
+.task-response-by {
+  /deep/ .select2-container {
+    min-width: 250px;
+  }
+}
+
+/deep/ .select2-results__option {
+  .select2-response-by-option {
+    .avatar {
+      border-radius: 50%;
+      height: 40px;
+      width: 40px;
+      line-height: 40px;
+      text-align: center;
+      margin-right: 10px;
+      font-size: 20px;
+    }
+  }
+}
+
+/deep/ .select2-selection__rendered {
+  .select2-response-by-option {
+    .avatar {
+      border-radius: 50%;
+      height: 26px;
+      margin-right: 8px;
+      margin-top: -3px;
+      margin-left: -8px;
+    }
+  }
+}

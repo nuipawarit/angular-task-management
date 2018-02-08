@@ -1,0 +1,99 @@
+<div *ngIf="rendering" class="landing-screen">
+  <img class="logo" src="assets/images/logo/rsz_2s-white.png">
+</div>
+
+<div class="wrapper">
+  <header class="main-header">
+    <a class="logo">
+      <span class="navbar-brand-icon fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-tasks fa-stack-1x"></i>
+      </span>
+      ระบบทะเบียนงาน
+    </a>
+
+    <nav class="navbar navbar-static-top">
+      <a class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+
+      <app-layout-navbar *ngIf="userData"></app-layout-navbar>
+    </nav>
+  </header>
+
+  <div class="main-sidebar">
+    <div class="sidebar">
+      <ul class="sidebar-menu">
+        <li class="header">MENU</li>
+
+        <li routerLinkActive="active">
+          <a href (click)="newTask()"><i class="fa fa-file"></i> สร้างงานใหม่</a>
+        </li>
+
+        <li class="treeview" routerLinkActive="active">
+          <a href>
+            <i class="fa fa-folder-open"></i> ทะเบียนงาน
+            <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+          </a>
+
+          <ul class="treeview-menu menu-open">
+            <li>
+              <a routerLink="/app/taskByPriority">
+                <i class="fa fa-circle-o"></i> ตามแผนการทำงาน
+              </a>
+            </li>
+
+            <li>
+              <a routerLink="/app/taskByOwner">
+                <i class="fa fa-circle-o"></i> ตามผู้รับผิดชอบ
+              </a>
+            </li>
+
+            <li>
+              <a routerLink="/app/approvalPenddingTask">
+                <i class="fa fa-circle-o"></i> งานที่รออนุมัติ
+              </a>
+            </li>
+
+            <li>
+              <a routerLink="/app/completedTask">
+                <i class="fa fa-circle-o"></i> งานที่ปิดแล้ว
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="header" *ngIf="userData?.userRights['0701000001']?.active">ผู้ดูแลระบบ</li>
+
+        <li *ngIf="userData?.userRights['0701000001']?.active" routerLinkActive="active">
+          <a routerLink="/app/serviceMonitor">
+            <i class="fa fa-television"></i> WebSocket Service
+          </a>
+        </li>
+
+        <li class="header">ค้นหางาน</li>
+
+        <form (submit)="openTaskModal(inputTaskID)" class="sidebar-form">
+          <div class="input-group input-group-sm">
+            <input type="text"
+                   name="inputTaskID"
+                   [(ngModel)]="inputTaskID"
+                   class="form-control"
+                   placeholder="ใส่เลขที่งาน"
+                   autocomplete="off">
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-flat"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+          <!--<p *ngIg="quick_search_task_form.error_msg != ''" class="help-block text-red">-->
+          <!--<i class="fa fa-exclamation-circle"></i> {{quick_search_task_form.error_msg}}-->
+          <!--</p>-->
+        </form>
+      </ul>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <router-outlet *ngIf="!rendering"></router-outlet>
+  </div>
+</div>

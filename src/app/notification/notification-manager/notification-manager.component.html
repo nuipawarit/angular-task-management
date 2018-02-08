@@ -1,0 +1,67 @@
+<div class="flex-wrapper">
+  <section class="content-header">
+    <h1>
+      การแจ้งเตือนทั้งหมด
+    </h1>
+
+    <ol class="breadcrumb hidden-xs hidden-sm">
+      <li><i class="fa fa-home"></i> Home</li>
+      <li class="active"><i class="fa fa-list"></i> การแจ้งเตือนทั้งหมด</li>
+    </ol>
+  </section>
+
+  <section class="content flex-content">
+    <div class="scroll-x">
+      <div class="filter">
+        <div class="margin-r-15">
+          <input type="text"
+                 [(ngModel)]="filter.searchText"
+                 class="form-control input-sm text-search"
+                 placeholder="ใส่เลขที่งาน, ข้อความการแจ้งเตือน">
+        </div>
+        <div class="margin-r-15">
+          <label class="checkbox-inline">
+            <input type="checkbox" [(ngModel)]="filter.approveOnly"> เฉพาะการขออนุมัติ
+          </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" [(ngModel)]="filter.includeReaded"> แสดงที่อ่านแล้ว
+          </label>
+        </div>
+        <div class="pull-right">
+          <button class="btn btn-sm bg-gray" (click)="getNotification()"><i class="fa fa-search"></i> Search</button>
+          <button class="btn btn-sm btn-default" (click)="resetFilter()">Reset</button>
+        </div>
+      </div>
+
+      <div class="result-wrapper">
+        <div class="result">
+          <div class="noti-list">
+            <app-notification-list
+                    maxHeight="100%"
+                    [data]="notifications"
+                    (listClick)="openTaskForm($event.TaskID)"
+                    [markReadBtn]="true"
+                    (markReadClick)="markNotiReaded($event)"
+                    (onScrollToBottom)="onScrollToBottom()"></app-notification-list>
+
+            <div *ngIf="fetching" class="noti-loading">
+              <h4><i class="fa fa-spin fa-circle-o-notch"></i> Loading...</h4>
+            </div>
+          </div>
+
+          <div class="task-form-container">
+            <div [hidden]="showFormPlaceHolder" class="task-modal edit-mode">
+              <div class="modal-content">
+                <app-task-modal #taskModel="task-modal"></app-task-modal>
+              </div>
+            </div>
+
+            <div [hidden]="!showFormPlaceHolder" class="box-placeholder">
+              โปรดเลือกการแจ้งเตือนทางซ้ายมือ
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

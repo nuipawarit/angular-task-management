@@ -1,0 +1,191 @@
+@import "skin-2s-task.less";
+@import "animation-keyframe.less";
+@import "scrollbar.less";
+
+body {
+  font-family: 'FontAwesome', 'Open Sans', Tahoma, sans-serif;
+  min-width: 375px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smoothing: antialiased;
+
+  &.disable-scroll {
+    overflow-y: hidden;
+  }
+
+  &.header-collapse {
+    .main-header {
+      transform: translate(0, -50px);
+      height: 0px;
+    }
+  }
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'RSU', sans-serif;
+}
+
+.strong {
+  font-weight: bold;
+}
+
+.ellipsis,
+.text-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 100px;
+}
+
+.text-ellipsis-120 {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+.text-height-pri {
+  color: #0088cc;
+}
+
+.text-medium-pri {
+  color: #5995b3;
+}
+
+.text-low-pri {
+  color: #777;
+}
+
+.highlighted {
+  background-color: #fff59d;
+}
+
+.content-flex {
+  padding-bottom: 0;
+}
+
+.content-wrapper {
+  position: relative;
+
+  .flex-wrapper {
+    display: flex;
+    flex-direction: column;
+    @media (min-width: @screen-sm-min) {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .flex-content {
+      margin: 0;
+      padding-bottom: 0;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+.loading-container {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+
+  &.ng-hide-remove {
+    animation: fadeIn 0.5s ease-out;
+  }
+  &.ng-hide-add {
+    animation: fadeOut 0.3s ease-out;
+  }
+
+  .loading-message {
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: 'RSU', sans-serif
+  }
+}
+
+.tag {
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  display: inline-block;
+  //border: 1px solid blue; //Debug Border
+}
+
+.tag-default {
+  color: #0088cc;
+}
+
+.tag-red {
+  background: #F44336;
+  color: #fff;
+}
+
+.tag-orange {
+  background: #F57F17;
+  color: #fff;
+}
+
+.tag-yellow {
+  background: #FFB300;
+  color: #fff;
+}
+
+.tag-teal {
+  background: #1ABC9C;
+  color: #fff;
+}
+
+.tag-blue {
+  background: #42A5F5;
+  color: #fff;
+}
+
+.tag-purple {
+  background: #9575cd;
+  color: #fff;
+}
+
+.tag-maroon {
+  background: #D81B60;
+  color: #fff;
+}
+
+.confirm-modal {
+  width: 300px;
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%) !important;
+
+  .modal-content {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+  }
+}
+
+.box-placeholder {
+  margin: 0;
+  padding: 30px 0;
+  color: #d2d6de;
+  text-align: center;
+  font-size: 18px;
+  font-family: 'RSU', sans-serif;
+}
+
+@import "general-component.less";
+@import "alerts.less";
+@import "ng-sortable.less";
+@import "select2.less";
+@import "material-loader-circle.less";
+@import "advanced-search-box.less";
+@import "trix.less";
+@import "ngx-datatable.less";

@@ -1,0 +1,38 @@
+<div class="tasklist-wrapper">
+  <div class="tasklist-container">
+    <div *ngFor="let column of columns" class="tasklist columns-view">
+      <div class="box box-solid" [ngClass]="column.class">
+        <div class="box-header with-border">
+          <img *ngIf="column.reponsedByEmpKey"
+               [src]="avatarUrl + 'emp' + column.reponsedByEmpKey + '_40x40.png'"
+               onerror="this.src='assets/images/user.png' ; "
+               class="avatar">
+          <i *ngIf="column.icon" class="fa" [ngClass]="column.icon"></i>
+          <h3 class="box-title">{{column.title}}</h3>
+        </div>
+        <div class="box-body" [ngSwitch]="hasGroup">
+          <ng-container *ngSwitchCase="true">
+            <app-task-box-group [tasks]="column.tasks"
+                                [groupBy]="groupBy"
+                                [searchText]="searchText"></app-task-box-group>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="false">
+            <app-task-box *ngFor="let task of column.tasks"
+                          [task]="task"
+                          [highlightText]="searchText"></app-task-box>
+          </ng-container>
+
+          <app-empty-task-box *ngIf="column.tasks.length === 0"></app-empty-task-box>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!columns" class="loading-container">
+      <div class="loading-message">กำลังค้นหางาน</div>
+      <svg class="circular">
+        <circle class="path" cx="20" cy="20" r="16" fill="none" stroke-width="3" stroke-miterlimit="10"/>
+      </svg>
+    </div>
+  </div>
+</div>

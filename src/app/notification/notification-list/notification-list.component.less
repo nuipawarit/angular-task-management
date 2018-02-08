@@ -1,0 +1,90 @@
+@import "../../../style/scrollbar.less";
+
+.menu {
+  max-height: 200px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+  .scrollbar (
+    @color: rgba(0, 0, 0, 0.25),
+    @background : rgba(0,0,0,0.05),
+    @width: 6px,
+    @radius: 2px
+  );
+
+  > li {
+    > a {
+      display: block;
+      white-space: nowrap; /* Prevent text from breaking */
+      border-bottom: 1px solid #eee;
+      color: #444444;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 10px;
+
+      &:hover {
+        background: #f4f4f4;
+        text-decoration: none;
+      }
+
+      &.readed {
+        opacity: 0.6;
+        background: #e6e6e6;
+        border-bottom: 1px solid #e6e6e6;
+      }
+
+      .noti-icon {
+        float: left;
+        margin-top: 4px;
+      }
+      .noti-msg {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+        margin-left: 20px;
+        margin-bottom: 4px;
+
+        & > * {
+          display: inline;
+        }
+      }
+      .noti-ts {
+        float: left;
+        font-size: 13px;
+        margin-left: 20px;
+      }
+      .mark-read-btn {
+        display: none;
+        font-size: 13px;
+        margin-right: 10px;
+        color: #337ab7;
+        white-space: nowrap;
+        float: right;
+
+        &:hover {
+          color: #23527c;
+        }
+        &.ng-enter {
+          animation: fadeIn 0.3s;
+        }
+        &.ng-leave {
+          animation: fadeOut 0.3s;
+        }
+      }
+
+    }
+    > a:hover {
+      .mark-read-btn {
+        display: inline-block;
+      }
+    }
+  }
+}

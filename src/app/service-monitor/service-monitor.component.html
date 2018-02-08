@@ -1,0 +1,44 @@
+<div class="flex-wrapper">
+  <section class="content-header">
+    <h1>
+      WebSocket Service Monitor
+      <small>
+        <i class="fa fa-circle small"
+           [ngClass]="{'text-green':service_status === 1, 'text-red':service_status === 0, 'text-gray':service_status === null}">
+        </i> {{service_status_name}}
+      </small>
+    </h1>
+
+    <ol class="breadcrumb hidden-xs hidden-sm">
+      <li><i class="fa fa-home"></i> Home</li>
+      <li class="active"><i class="fa fa-television"></i> Websocket Service</li>
+    </ol>
+  </section>
+
+  <section class="content flex-content">
+    <pre class="service-log" ngx-auto-scroll lock-y-offset="10">{{service_logs}}</pre>
+
+    <div class="service-controller">
+      <button type="button"
+              (click)="start()"
+              class="btn btn-default btn-flat"
+              [disabled]="service_status !== 0 || is_working">
+        <i class="fa fa-play text-green"></i> Start Service
+      </button>
+
+      <button type="button"
+              (click)="stop()"
+              class="btn btn-default btn-flat"
+              [disabled]="service_status !== 1 || is_working">
+        <i class="fa fa-stop"></i> Stop Service
+      </button>
+
+      <button type="button"
+              (click)="refresh()"
+              class="btn btn-default btn-flat  pull-right"
+              [disabled]="is_working">
+        <i class="fa fa-refresh" ng-class="{'fa-spin':is_refreshing}"></i> Refresh
+      </button>
+    </div>
+  </section>
+</div>

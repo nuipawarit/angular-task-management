@@ -1,0 +1,18 @@
+<div class="modal-body text-center">
+  <div *ngIf="title" class="">
+    <h4 class="modal-title" [innerHTML]="title"></h4>
+  </div>
+  <p [innerHTML]="content"></p>
+  <p>
+    <textarea *ngIf="messageBox" [(ngModel)]="message" class="form-control"></textarea>
+  </p>
+  <button type="button"
+          class="btn btn-primary btn-sm"
+          (click)="confirm()"
+          [disabled]="messageRequire && !message">ยืนยัน
+  </button>
+  <button type="button"
+          class="btn btn-default btn-sm"
+          (click)="decline()">ยกเลิก
+  </button>
+</div>

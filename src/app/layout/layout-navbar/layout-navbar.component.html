@@ -1,0 +1,94 @@
+<div class="navbar-custom-menu">
+  <ul class="nav navbar-nav">
+    <li *ngIf="userData?.environment.name == 'development'"
+        class="navbar-text small env-info hidden-xs"
+        (click)="ngOnInit()">
+      <span>sv: {{userData?.environment.hostname}}</span><br>
+      <span>db: {{userData?.environment.database}}</span>
+    </li>
+    <li class="dropdown notifications-menu">
+      <a href="" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-flag-o"></i>
+        <span *ngIf="approveNotification?.length > 0" class="label label-danger">{{approveNotification?.length}}</span>
+      </a>
+      <ul *ngIf="approveNotification?.length > 0" class="dropdown-menu">
+        <li class="header">
+          <span>You have {{approveNotification?.length}} requests for approval</span>
+        </li>
+
+        <li>
+          <app-notification-list
+                  [data]="approveNotification"
+                  (listClick)="openTaskModal($event.TaskID)"></app-notification-list>
+        </li>
+
+        <li class="footer">
+          <a routerLink="/app/approvalPenddingTask">งานที่รออนุมัติทั้งหมด <i class="fa fa-external-link-square text-muted"></i></a>
+        </li>
+      </ul>
+      <ul *ngIf="approveNotification?.length === 0" class="dropdown-menu">
+        <h4 class="empty-noti"><i class="fa fa-flag-o"></i> ไม่มีการขออนุมัติ</h4>
+      </ul>
+    </li>
+
+    <li class="dropdown notifications-menu">
+      <a href="" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-bell-o"></i>
+        <span *ngIf="generalNotiUnreadCount > 0"
+              class="label label-danger">{{generalNotiUnreadCount}}</span>
+      </a>
+      <ul class="dropdown-menu"
+          *ngIf="generalNotification?.length > 0">
+        <li class="header">
+          <span>You have new {{generalNotiUnreadCount}} notifications</span>
+        </li>
+        <li>
+          <app-notification-list
+                  [data]="generalNotification"
+                  (listClick)="openTaskModal($event.TaskID)"
+                  [markReadBtn]="true"
+                  (markReadClick)="markNotiReaded($event)"></app-notification-list>
+        </li>
+        <li class="footer">
+          <a href (click)="markAllReaded()">ทำเครื่องหมายว่าอ่านแล้วทั้งหมด</a>
+        </li>
+        <li class="footer">
+          <a routerLink="/app/notificationManager">ดูการแจ้งเตือนทั้งหมด <i class="fa fa-external-link-square text-muted"></i></a>
+        </li>
+      </ul>
+      <ul *ngIf="generalNotification?.length === 0" class="dropdown-menu">
+        <h4 class="empty-noti"><i class="fa fa-bell-o"></i> ไม่มีการแจ้งเตือนใหม่</h4>
+        <li class="footer">
+          <a routerLink="/app/notificationManager">ดูการแจ้งเตือนทั้งหมด <i class="fa fa-external-link-square text-muted"></i></a>
+        </li>
+      </ul>
+    </li>
+    <li class="dropdown user user-menu">
+      <a href="" class="dropdown-toggle" data-toggle="dropdown">
+        <img *ngIf="userData?.UserEmpKey"
+             [src]="avatarUrl+'emp'+userData.UserEmpKey+'_40x40.png'"
+             class="user-image"
+             onerror="this.src='assets/images/user.png';">
+        <span class="hidden-xs">{{userData?.UserCode}}</span>
+      </a>
+      <ul class="dropdown-menu">
+        <li class="user-header">
+          <img *ngIf="userData?.UserEmpKey"
+               [src]="avatarUrl+'/emp'+userData.UserEmpKey+'_150x150.png'"
+               class="img-circle"
+               onerror="this.src='assets/images/user.png';">
+          <p>
+            <span>{{userData?.UserName}}</span>
+            <small>{{userData?.UserRTName}}</small>
+          </p>
+        </li>
+
+        <li class="user-footer">
+          <div class="pull-right">
+            <a routerLink="/login" class="btn btn-default btn-flat">Sign out</a>
+          </div>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
